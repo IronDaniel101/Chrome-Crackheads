@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 public class UdpIntReceiver : MonoBehaviour
 {
     [Header("Network")]
-    public int listenPort = 49152; // must match Arduino
+    private int listenPort = 49999; // must match Arduino
 
     [Header("Player Settings")]
     public Rigidbody playerRigidbody;

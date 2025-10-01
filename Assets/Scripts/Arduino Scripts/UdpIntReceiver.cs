@@ -8,16 +8,26 @@ using System.Collections.Concurrent;
 public class UdpIntReceiver : MonoBehaviour
 {
     [Header("Network")]
-    private int listenPort = 49999; // must match Arduino
+    [SerializeField] private int listenPort = 49999; // must match Arduino
 
     [Header("Player Settings")]
     public Rigidbody playerRigidbody;
     public float jumpForce = 5f;
 
-    UdpClient udp;
-    Thread recvThread;
-    volatile bool running;
-    ConcurrentQueue<string> lines = new ConcurrentQueue<string>();
+    [Header("Live Input (read-only)")]
+    [Tooltip("Mapped from pot 0..1023 -> -1..+1")]
+    public float steeringAxis; // -1..+1
+    public bool button1Pressed; // true while held
+    public bool button2Pressed;
+
+    private UdpClient udp;
+    private Thread recvThread;
+    private volatile bool running;
+    private readonly ConcurrentQueue<string> lines = new ConcurrentQueue<string>();
+
+    // For edge detection
+    private bool lastB1 = true; // Arduino sends 1=released, 0=pressed
+    private bool lastB2 = true;
 
     void Start()
     {
@@ -25,7 +35,7 @@ public class UdpIntReceiver : MonoBehaviour
         running = true;
         recvThread = new Thread(RecvLoop) { IsBackground = true };
         recvThread.Start();
-        Debug.Log($"[UDP] Listening on port {listenPort}. If nothing arrives, check firewall and IP.");
+        Debug.Log($"[UDP] Listening on UDP {listenPort}. If nothing arrives, check firewall and IP.");
     }
 
     void RecvLoop()
@@ -37,9 +47,13 @@ public class UdpIntReceiver : MonoBehaviour
             {
                 var data = udp.Receive(ref any);
                 var line = Encoding.ASCII.GetString(data).Trim();
-                lines.Enqueue(line);
+                if (!string.IsNullOrEmpty(line))
+                    lines.Enqueue(line);
             }
-            catch { /* socket closed */ }
+            catch
+            {
+                // socket closed or interrupted
+            }
         }
     }
 
@@ -47,37 +61,67 @@ public class UdpIntReceiver : MonoBehaviour
     {
         while (lines.TryDequeue(out var line))
         {
-            if (int.TryParse(line, out int val))
-                ButtonPressed(val);
+            var parts = line.Split(',');
+            if (parts.Length >= 3
+                && int.TryParse(parts[0], out int pot)
+                && int.TryParse(parts[1], out int b1Int)
+                && int.TryParse(parts[2], out int b2Int))
+            {
+                HandleCsv(pot, b1Int, b2Int);
+            }
+            else
+            {
+                Debug.LogWarning($"[UDP] Unrecognized packet: '{line}'");
+            }
         }
     }
 
-    private void ButtonPressed(int button)
+    private void HandleCsv(int pot, int b1Int, int b2Int)
     {
-        switch (button)
+        // Arduino sends: pot 0..1023, b1/b2 1=released, 0=pressed
+        steeringAxis = Mathf.Lerp(-1f, 1f, Mathf.InverseLerp(0f, 1023f, pot));
+
+        bool b1 = (b1Int != 0);
+        bool b2 = (b2Int != 0);
+
+        // Edge detect: released (true) -> pressed (false)
+        if (lastB1 && !b1)
         {
-            case 9: Debug.Log("Centered"); break;
-            case 8: Debug.Log("Jumped"); Jump(); break;
-            default: Debug.Log($"Other: {button}"); break;
+            Jump();
+            Debug.Log("[CTRL] Button1 pressed -> Jump");
         }
+        if (lastB2 && !b2)
+        {
+            Debug.Log("[CTRL] Button2 pressed");
+        }
+
+        button1Pressed = !b1; // true while held
+        button2Pressed = !b2;
+
+        lastB1 = b1;
+        lastB2 = b2;
     }
 
     private void Jump()
     {
-        if (playerRigidbody != null)
+        if (!playerRigidbody) return;
+
+        // Optional simple "ground-ish" check using vertical speed
+        if (Mathf.Abs(playerRigidbody.linearVelocity.y) < 0.05f)
         {
-            // Optional: Only jump if nearly grounded
-            if (Mathf.Abs(playerRigidbody.linearVelocity.y) < 0.01f)
-            {
-                playerRigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            }
+            playerRigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
 
     void OnDestroy()
     {
         running = false;
-        try { recvThread?.Join(200); } catch { }
         try { udp?.Close(); } catch { }
+        try { recvThread?.Join(200); } catch { }
+    }
+
+    void OnApplicationQuit()
+    {
+        OnDestroy();
     }
 }

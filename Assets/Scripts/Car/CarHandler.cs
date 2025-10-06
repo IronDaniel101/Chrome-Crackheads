@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
 public class CarHandler : MonoBehaviour
 {
@@ -8,32 +9,39 @@ public class CarHandler : MonoBehaviour
     [SerializeField] private Rigidbody rb;
 
     //Multipliers (sets speed for driving)
-    [SerializeField] private float accelerationMultiplier = 3;
-    [SerializeField] private float breaksMultiplier = 10;
-    [SerializeField] private float steeringMultiplier = 5;
+    [Header("Multipliers")]
+    [SerializeField] private float accelerationMultiplier = 3f;
+    [SerializeField] private float breaksMultiplier = 10f;
+    [SerializeField] private float steeringMultiplier = 5f;
 
     //Input 
     private Vector2 input = Vector2.zero;
 
+
+    public void OnMove(InputAction.CallbackContext ctx)
+    {
+        input = ctx.ReadValue<Vector2>();
+
+        //Debug (Prints only when you move left/right past a threshold)
+        if (input.x > 0.2f) Debug.Log("Left STICK -> RIGHT");
+        if (input.x > -0.2f) Debug.Log("Left STICK -> LEFT");
+
+    }
+
     private void FixedUpdate()
     {
         //Apply Acceleration
-        if(input.y> 0)
-            Accelerate();
-        else
-            rb.linearDamping = 0.2f;
+        if(input.y> 0) Accelerate();
+        else        rb.linearDamping = 0.2f;
 
         //Applying Brakes
-        if (input.y < 0)
-            Brake();
-        
+        if (input.y < 0f) Brake();
         Steer();
     }
 
     void Accelerate()
     {
-        rb.linearDamping = 0;
-
+        rb.linearDamping = 0f;
         rb.AddForce(rb.transform.forward * accelerationMultiplier * input.y);
     }
 

@@ -18,7 +18,7 @@ public class CarHandler : MonoBehaviour
     private Vector2 input = Vector2.zero;
 
 
-    public void OnMove(InputAction.CallbackContext ctx)
+    public void Move(InputAction.CallbackContext ctx)
     {
         input = ctx.ReadValue<Vector2>();
 

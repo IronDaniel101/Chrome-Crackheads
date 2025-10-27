@@ -265,8 +265,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 640632927}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
-  m_LocalPosition: {x: 0, y: 1.09, z: -2.62}
+  m_LocalRotation: {x: 0.18771231, y: -0.40500388, z: 0.08534766, w: 0.8907591}
+  m_LocalPosition: {x: 10.33, y: 5.57, z: -5.27}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -523,7 +523,7 @@ MonoBehaviour:
     m_Bits: 0
   MinimumDistanceFromTarget: 0.1
   AvoidObstacles:
-    Enabled: 1
+    Enabled: 0
     DistanceLimit: 0
     MinimumOcclusionTime: 0
     CameraRadius: 0.4
@@ -554,12 +554,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TrackerSettings:
-    BindingMode: 1
-    PositionDamping: {x: 1, y: 0, z: 0}
+    BindingMode: 4
+    PositionDamping: {x: 0, y: 0, z: 0}
     AngularDampingMode: 0
     RotationDamping: {x: 0, y: 0, z: 0}
-    QuaternionDamping: 1
-  FollowOffset: {x: 0, y: 1.09, z: -2.62}
+    QuaternionDamping: 0.56
+  FollowOffset: {x: 10.33, y: 5.57, z: -5.27}
 --- !u!114 &792203199
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -611,13 +611,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 792203196}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
-  m_LocalPosition: {x: 0, y: 1.09, z: -2.62}
+  m_LocalRotation: {x: 0.18771231, y: -0.40500388, z: 0.08534766, w: 0.8907591}
+  m_LocalPosition: {x: 10.33, y: 5.57, z: -5.27}
   m_LocalScale: {x: 1, y: 1.24, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 23.8, y: -48.9, z: 0}
 --- !u!4 &848601034 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4005887351528214521, guid: 07085a5383568d041bf14e4f49e5b04a, type: 3}

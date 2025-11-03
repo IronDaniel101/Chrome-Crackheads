@@ -128,7 +128,7 @@ public class UdpIntReceiver : MonoBehaviour
     private void HandleCsv(int pot, int b1Int, int b2Int)
     {
         // pot: 0..1023 -> -1..+1
-        steeringAxis = Mathf.Lerp(-1f, 1f, Mathf.InverseLerp(0f, 1023f, pot));
+        steeringAxis = Mathf.Lerp(-2f, 2f, Mathf.InverseLerp(0f, 1023f, pot));
 
         bool b1 = (b1Int != 0); // true = released
         bool b2 = (b2Int != 0);

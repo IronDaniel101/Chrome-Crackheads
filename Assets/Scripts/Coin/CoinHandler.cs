@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 
+
+[DefaultExecutionOrder(-100)]
 public class CoinHandler : MonoBehaviour
 {
     public static CoinHandler Instance { get; private set; }
@@ -13,6 +15,12 @@ public class CoinHandler : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         // Optionally: DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        // Broadcast current value so any late UI can sync immediately
+        OnCoinCountChanged?.Invoke(TotalCoins);
     }
 
     public void AddCoins(int amount)

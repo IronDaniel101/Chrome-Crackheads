@@ -16,7 +16,7 @@ public class EndlessLevelHandler : MonoBehaviour
 
     WaitForSeconds waitFor100ms = new WaitForSeconds(0.1f);
     
-    const float sectionLength = 26;
+    const float sectionLength = 120;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

@@ -138,6 +138,7 @@ GameObject:
   - component: {fileID: 640632932}
   - component: {fileID: 640632931}
   - component: {fileID: 640632933}
+  - component: {fileID: 640632934}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -310,6 +311,23 @@ MonoBehaviour:
   sectionsPrefabs:
   - {fileID: 713167898775536789, guid: f85587cec45b715499652e4e2f7a3e1a, type: 3}
   - {fileID: 1969102984292332303, guid: c68f31f98ecc2e84a85fb227143646d7, type: 3}
+--- !u!114 &640632934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 640632927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 394a54023ba7cfa4db9fca6d2e358f1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carAIPrefabs:
+  - {fileID: 1312657714817749683, guid: 29ac03138ff5f894fb62ca4928bde416, type: 3}
+  otherCarsLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &655598676
 GameObject:
   m_ObjectHideFlags: 0
@@ -654,6 +672,7 @@ GameObject:
   - component: {fileID: 1924695053}
   - component: {fileID: 1924695054}
   - component: {fileID: 1924695055}
+  - component: {fileID: 1924695056}
   m_Layer: 0
   m_Name: Player_Vehicle
   m_TagString: Player
@@ -763,9 +782,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 1924695053}
+  gameModel: {fileID: 0}
   accelerationMultiplier: 3
   breaksMultiplier: 10
   steeringMultiplier: 5
+--- !u!65 &1924695056
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1924695051}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.8401719, y: 2.5482445, z: 10.809999}
+  m_Center: {x: -0.5856275, y: 1.437355, z: 2.1381097}
 --- !u!1 &1988564839
 GameObject:
   m_ObjectHideFlags: 0
@@ -862,7 +903,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: KillerTruck
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 4067858969642977675, guid: 74642ec56dbfaa24f881a4da7d1fbf41, type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4067858969642977675, guid: 74642ec56dbfaa24f881a4da7d1fbf41, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4067858969642977675, guid: 74642ec56dbfaa24f881a4da7d1fbf41, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5246994495854929431, guid: 74642ec56dbfaa24f881a4da7d1fbf41, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

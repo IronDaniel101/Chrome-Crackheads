@@ -8,11 +8,21 @@ public class CarHandler : MonoBehaviour
 
     [SerializeField] private Rigidbody rb;
 
+
+
+    [SerializeField]
+    Transform gameModel;
+
+    //Max Amounts
+    float maxSteerVelocity = 2;
+    float maxForwardVelocity = 30;
+
     //Multipliers (sets speed for driving)
     [Header("Multipliers")]
     [SerializeField] private float accelerationMultiplier = 3f;
     [SerializeField] private float breaksMultiplier = 10f;
     [SerializeField] private float steeringMultiplier = 5f;
+
 
     //Input 
     private Vector2 input = Vector2.zero;
@@ -26,6 +36,14 @@ public class CarHandler : MonoBehaviour
         if (input.x > 0.2f) Debug.Log("Left STICK -> RIGHT");
         if (input.x > -0.2f) Debug.Log("Left STICK -> LEFT");
 
+    }
+
+    void update()
+    {
+        //Rotate Car Model When "Turning"
+        gameModel.transform.rotation = Quaternion.Euler(0, rb.linearVelocity.x * 5, 0);
+
+        
     }
 
     private void FixedUpdate()
@@ -42,6 +60,11 @@ public class CarHandler : MonoBehaviour
     void Accelerate()
     {
         rb.linearDamping = 0f;
+
+        //Stay within the speed limit
+        if (rb.linearVelocity.z >= maxForwardVelocity)
+            return;
+
         rb.AddForce(rb.transform.forward * accelerationMultiplier * input.y);
     }
 
@@ -58,7 +81,25 @@ public class CarHandler : MonoBehaviour
     {
         if (Mathf.Abs(input.x) > 0)
         {
-            rb.AddForce(rb.transform.right * steeringMultiplier * input.x);
+            //Moves car sideways if car is at least moving by 5 units
+            float speedBaseSteerLimit = rb.linearVelocity.z / 5.0f;
+            speedBaseSteerLimit = Mathf.Clamp01(speedBaseSteerLimit);
+
+            rb.AddForce(rb.transform.right * steeringMultiplier * input.x * speedBaseSteerLimit);
+
+            //Normalize the X Velocity
+            float normalizedX = rb.linearVelocity.x / maxSteerVelocity;
+
+            //Ensure that we Don't allow it to get bigger than 1 in magnitued.
+            normalizedX = Mathf.Clamp(normalizedX, -1.0f, 1.0f);
+
+            //Make sure we stay within the turn speed limit
+            rb.linearVelocity = new Vector3(normalizedX * maxSteerVelocity, 0, rb.linearVelocity.z);
+        }
+        else
+        {
+            //Auto Center Car
+            rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, new Vector3(0, 0, rb.linearVelocity.z), Time.fixedDeltaTime * 3);
         }
     }
 
@@ -67,6 +108,12 @@ public class CarHandler : MonoBehaviour
         inputVector.Normalize();
 
         input = inputVector;
+    }
+
+
+    public void SetMaxSpeed(float newMaxSpeed)
+    {
+        maxForwardVelocity = newMaxSpeed;
     }
 
 }

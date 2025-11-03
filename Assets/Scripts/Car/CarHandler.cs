@@ -28,6 +28,13 @@ public class CarHandler : MonoBehaviour
     private Vector2 input = Vector2.zero;
 
 
+
+    //Stats
+    float carStartPositionZ;
+    float distanceTravelled = 0;
+    public float DistanceTravelled => distanceTravelled;
+
+
     public void Move(InputAction.CallbackContext ctx)
     {
         input = ctx.ReadValue<Vector2>();
@@ -38,11 +45,25 @@ public class CarHandler : MonoBehaviour
 
     }
 
-    void update()
+    void Start()
+    {
+        carStartPositionZ = transform.position.z;
+    }
+
+    void Update()
     {
         //Rotate Car Model When "Turning"
-        gameModel.transform.rotation = Quaternion.Euler(0, rb.linearVelocity.x * 5, 0);
+        //rb.linearVelocity.x * 5
 
+        float yaw = 180f + rb.linearVelocity.x * 5f;
+        gameModel.transform.rotation = Quaternion.Euler(0, yaw, 0);
+
+
+
+
+
+        //Update Distance Travelled
+        distanceTravelled = transform.position.z - carStartPositionZ;
         
     }
 

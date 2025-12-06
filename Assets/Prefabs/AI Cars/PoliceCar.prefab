@@ -55,5 +55,28 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 132ce87a1d4cbdf49ab41153396d9197, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8946731540491431126}
   m_SourcePrefab: {fileID: 100100000, guid: 132ce87a1d4cbdf49ab41153396d9197, type: 3}
+--- !u!1 &8032836755632133905 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 132ce87a1d4cbdf49ab41153396d9197, type: 3}
+  m_PrefabInstance: {fileID: 7186398832780552768}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8946731540491431126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8032836755632133905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff6d51022cc88f4189d9903ef1a48df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  forwardSpeed: 35
+  player: {fileID: 1288299560180117999, guid: 74642ec56dbfaa24f881a4da7d1fbf41, type: 3}
+  passDistanceAhead: 10

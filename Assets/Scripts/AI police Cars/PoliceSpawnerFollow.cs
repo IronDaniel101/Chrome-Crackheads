@@ -7,6 +7,7 @@ public class PoliceSpawnerFollow : MonoBehaviour
     //Finding the player and setting an offset behind the player to lock the spawn area.
     [SerializeField] private Transform player;
     [SerializeField] private float zOffset = -25f;
+    [SerializeField] private float xOffset = -1.3f;
     [SerializeField] private float spawnBlockHeight = 0.5f; //fixed height
 
 
@@ -28,13 +29,11 @@ public class PoliceSpawnerFollow : MonoBehaviour
     {
         Vector3 pos = transform.position;
 
-        // Follow behind the player on Z
         pos.z = player.position.z + zOffset;
 
-        // Locked X
-        pos.x = fixedX;
+        // Apply fixed X + offset
+        pos.x = fixedX + xOffset;
 
-        // Locked Y
         pos.y = spawnBlockHeight;
 
         transform.position = pos;

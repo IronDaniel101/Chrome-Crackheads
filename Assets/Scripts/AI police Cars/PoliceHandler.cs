@@ -11,6 +11,7 @@ public class PoliceHandler : MonoBehaviour
     [Header("Player Reference")]
     [SerializeField] private Transform player;       
     [SerializeField] private float passDistanceAhead = 10f;
+    private bool hasTriggeredFail = false;
 
     public float health = 100f;
 
@@ -26,19 +27,22 @@ public class PoliceHandler : MonoBehaviour
 
     private void CheckIfPassedPlayer()
     {
-        if (player == null) return; //if no player, then return.
+        if (player == null || hasTriggeredFail) 
+            return;
 
-        // Convert police position into the player's local space
         Vector3 policeInPlayerSpace = player.InverseTransformPoint(transform.position);
 
-        // If Z is positive and large enough, then it will play the loss logic.
         if (policeInPlayerSpace.z > passDistanceAhead)
         {
+            hasTriggeredFail = true;  // prevent future triggers
+
             Debug.Log("Police passed the player! Mission failed.");
 
-            // This should then play "Mission Failed" Logic because the police car has overtaken the player.
+            // Call mission failed logic ONCE here
+            MissionFailed();
         }
     }
+
 
     public void Initialize(Transform playerTransform)
     {
@@ -59,5 +63,14 @@ public class PoliceHandler : MonoBehaviour
     {
         Debug.Log("Police car destroyed!");
         Destroy(gameObject);
+    }
+
+    private void MissionFailed()
+    {
+        // Trigger your lose screen, reload scene, etc.
+        // Example:
+        // GameManager.Instance.ShowMissionFailedScreen();
+
+        Debug.Log("MISSION FAILED EVENT TRIGGERED");
     }
 }

@@ -21,7 +21,16 @@ public class CarHandler : MonoBehaviour
     [Header("Multipliers")]
     [SerializeField] private float accelerationMultiplier = 3f;
     [SerializeField] private float breaksMultiplier = 10f;
-    [SerializeField] private float steeringMultiplier = 5f;
+    [SerializeField] private float steeringMultiplier = 5f; 
+
+    //Boost System For Controller
+    [SerializeField] private float boostSpeed = 60f;     // fixed boost top speed
+    [SerializeField] private float boostDuration = 4f;   // how long boost lasts
+    [SerializeField] private float boostCooldown = 20f;  // time between boosts
+
+    private bool isBoosting = false;
+    private float originalMaxSpeed;
+    private float lastBoostEndTime = -Mathf.Infinity;
 
 
     //Input 
@@ -37,17 +46,20 @@ public class CarHandler : MonoBehaviour
 
     public void Move(InputAction.CallbackContext ctx)
     {
-        input = ctx.ReadValue<Vector2>();
+        Vector2 raw = ctx.ReadValue<Vector2>();
 
-        //Debug (Prints only when you move left/right past a threshold)
+        // X = steering, Y = only for braking (down)
+        input = new Vector2(raw.x, Mathf.Min(raw.y, 0f));
+
+        // Debug (Prints only when you move left/right past a threshold)
         if (input.x > 0.2f) Debug.Log("Left STICK -> RIGHT");
-        if (input.x > -0.2f) Debug.Log("Left STICK -> LEFT");
-
+        if (input.x < -0.2f) Debug.Log("Left STICK -> LEFT");
     }
 
     void Start()
     {
         carStartPositionZ = transform.position.z;
+        originalMaxSpeed = maxForwardVelocity;   // normal top speed
     }
 
     void Update()
@@ -58,10 +70,6 @@ public class CarHandler : MonoBehaviour
         float yaw = 180f + rb.linearVelocity.x * 5f;
         gameModel.transform.rotation = Quaternion.Euler(0, yaw, 0);
 
-
-
-
-
         //Update Distance Travelled
         distanceTravelled = transform.position.z - carStartPositionZ;
         
@@ -69,12 +77,14 @@ public class CarHandler : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //Apply Acceleration
-        if(input.y> 0) Accelerate();
-        else        rb.linearDamping = 0.2f;
+        // Always try to accelerate up to max speed
+        Accelerate();
 
-        //Applying Brakes
-        if (input.y < 0f) Brake();
+        // Allow braking only when pushing the stick down
+        if (input.y < 0f)
+            Brake();
+
+        // Steering still uses input.x
         Steer();
     }
 
@@ -82,17 +92,39 @@ public class CarHandler : MonoBehaviour
     {
         rb.linearDamping = 0f;
 
-        //Stay within the speed limit
+        // Stay within the speed limit
         if (rb.linearVelocity.z >= maxForwardVelocity)
             return;
 
-        rb.AddForce(rb.transform.forward * accelerationMultiplier * input.y);
+        // Constant push forward
+        rb.AddForce(rb.transform.forward * accelerationMultiplier);
+    }
+
+    public void Boost(InputAction.CallbackContext ctx)
+    {
+        if (!ctx.performed)
+            return;
+
+        // Don't start a new boost while already boosting
+        if (isBoosting)
+            return;
+
+        // Only lock behind the timer
+        bool cooldownReady = Time.time >= lastBoostEndTime + boostCooldown;
+
+        if (!cooldownReady)
+        {
+            Debug.Log("Boost on cooldown");
+            return;
+        }
+
+        StartCoroutine(BoostRoutine());
     }
 
     void Brake()
     {
-        //Don't Brake unless vehicle is moving forward
-        if(rb.linearVelocity.z <= 0)
+        // Don't brake unless vehicle is moving forward
+        if (rb.linearVelocity.z <= 0)
             return;
 
         rb.AddForce(rb.transform.forward * breaksMultiplier * input.y);
@@ -135,6 +167,34 @@ public class CarHandler : MonoBehaviour
     public void SetMaxSpeed(float newMaxSpeed)
     {
         maxForwardVelocity = newMaxSpeed;
+    }
+
+    private IEnumerator BoostRoutine()
+    {
+        isBoosting = true;
+
+        if (originalMaxSpeed <= 0f)
+            originalMaxSpeed = maxForwardVelocity;
+
+        // Apply boost
+        maxForwardVelocity = boostSpeed;
+        Debug.Log("BOOST START");
+
+        yield return new WaitForSeconds(boostDuration);
+
+        // Restore normal speed
+        maxForwardVelocity = originalMaxSpeed;
+
+        // SNAP SPEED BACK TO NORMAL HERE
+        rb.linearVelocity = new Vector3(
+            rb.linearVelocity.x,
+            rb.linearVelocity.y,
+            originalMaxSpeed
+        );
+
+        isBoosting = false;
+        lastBoostEndTime = Time.time;
+        Debug.Log("BOOST END");
     }
 
 }

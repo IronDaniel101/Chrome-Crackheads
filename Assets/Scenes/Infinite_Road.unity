@@ -425,7 +425,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1924695052}
-  zOffset: -25
+  zOffset: -100
   xOffset: -1
   spawnBlockHeight: 0.5
 --- !u!114 &361045907
@@ -444,67 +444,6 @@ MonoBehaviour:
   spawnInterval: 3
   maxPoliceCars: 5
   spawnHeight: 0.5
---- !u!1001 &507818762
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.03
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -12.69
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8032836755632133905, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_Name
-      value: PoliceCar (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 8946731540491431126, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: forwardSpeed
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
 --- !u!1 &640632927
 GameObject:
   m_ObjectHideFlags: 0
@@ -692,6 +631,7 @@ MonoBehaviour:
   sectionsPrefabs:
   - {fileID: 713167898775536789, guid: f85587cec45b715499652e4e2f7a3e1a, type: 3}
   - {fileID: 1969102984292332303, guid: c68f31f98ecc2e84a85fb227143646d7, type: 3}
+  - {fileID: 713167898775536789, guid: f4454244d5d5f0b46891caa83b661ce6, type: 3}
 --- !u!114 &640632934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1101,67 +1041,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 34.8, y: 0, z: 0}
---- !u!1001 &928108339
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.03
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -9.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8032836755632133905, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_Name
-      value: PoliceCar (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 8946731540491431126, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: forwardSpeed
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
 --- !u!1 &1058746416
 GameObject:
   m_ObjectHideFlags: 0
@@ -1872,6 +1751,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 77d598e9-8e9f-4743-b1f9-356ecc319860
     m_ActionName: 'Gameplay/Move[/XInputControllerWindows/leftStick]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1924695055}
+        m_TargetAssemblyTypeName: CarHandler, Assembly-CSharp
+        m_MethodName: Boost
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 2540d6c8-add7-4f44-9c4d-c59ba25d6c86
+    m_ActionName: 'Gameplay/Boost[/XInputControllerWindows/buttonSouth]'
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Gamepad
   m_DefaultActionMap: Gameplay
@@ -1894,6 +1789,9 @@ MonoBehaviour:
   accelerationMultiplier: 3
   breaksMultiplier: 10
   steeringMultiplier: 5
+  boostSpeed: 60
+  boostDuration: 8
+  boostCooldown: 16
 --- !u!65 &1924695056
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2054,67 +1952,6 @@ Transform:
   - {fileID: 236106581}
   m_Father: {fileID: 1924695052}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &2127435699
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.03
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -5.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7219708721865674155, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8032836755632133905, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: m_Name
-      value: PoliceCar
-      objectReference: {fileID: 0}
-    - target: {fileID: 8946731540491431126, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
-      propertyPath: forwardSpeed
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 73e1088b5733584479ab481ab6212b99, type: 3}
 --- !u!1001 &6869258749593736143
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2287,6 +2124,3 @@ SceneRoots:
   - {fileID: 1241000569}
   - {fileID: 1058746419}
   - {fileID: 361045905}
-  - {fileID: 2127435699}
-  - {fileID: 928108339}
-  - {fileID: 507818762}

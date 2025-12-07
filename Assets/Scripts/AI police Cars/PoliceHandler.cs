@@ -12,6 +12,8 @@ public class PoliceHandler : MonoBehaviour
     [SerializeField] private Transform player;       
     [SerializeField] private float passDistanceAhead = 10f;
 
+    public float health = 100f;
+
     // Update is called once per frame
     private void Update()
     {
@@ -41,5 +43,21 @@ public class PoliceHandler : MonoBehaviour
     public void Initialize(Transform playerTransform)
     {
         player = playerTransform;
+    }
+
+    //Added damage system for police cars
+    public void TakeDamage(float amount)
+    {
+        health -= amount;
+        if (health <= 0f)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log("Police car destroyed!");
+        Destroy(gameObject);
     }
 }

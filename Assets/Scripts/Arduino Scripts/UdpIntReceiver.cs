@@ -7,37 +7,37 @@ using System.Collections.Concurrent;
 
 public class UdpIntReceiver : MonoBehaviour
 {
+    //Arduino Stuff very important
     [Header("Network")]
     [SerializeField] private int listenPort = 49999; // must match Arduino
-
     [Header("Rotation (Pot -> Yaw)")]
-    [Tooltip("Which transform to rotate. If null, rotates this GameObject.")]
     public Transform rotationTarget;
-    [Tooltip("Maps pot extremes to ±this many degrees around Y.")]
     public float maxYawDegrees = 90f;
-    [Tooltip("Invert pot direction if needed.")]
     public bool invertYaw = false;
     [Range(0f, 1f)]
-    [Tooltip("0 = instant, 1 = very smooth.")]
     public float yawSmoothing = 0.2f;
 
-    [Header("Spawn on Button 1")]
-    public GameObject spawnPrefab;
-    [Tooltip("Optional parent for spawned objects (otherwise scene root).")]
-    public Transform spawnParent;
-    [Tooltip("Spawn offset from rotationTarget (or this transform if null).")]
-    public Vector3 spawnOffset = new Vector3(0, 0, 1);
+    //Button 1 stuff
+    [Header("Button 1")]
+    public BoxCollider crosshairBox;
+    public float damageAmount = 10f;
 
-    [Header("Color toggle on Button 2")]
-    public Renderer colorRenderer; // if null, will try GetComponentInChildren<Renderer>()
-    public Color idleColor = Color.white;
-    public Color activeColor = Color.green;
+    //Button 2 stuff
+    [Header("Button 2 Action")]
+    public GameObject bombPrefab;
+    public Transform bombPoint;
+    public float bombDelay = 2f;
+    public float bombRadius = 5f;
+    public float bombDamage = 100f;
+    private float bombCooldownTimer = 0f;
+    public float bombCooldown = 5f; // seconds
+    public GameObject explosionEffectPrefab;
 
+    //Shows inputs
     [Header("Live Input (read-only)")]
-    [Tooltip("Mapped from pot 0..1023 -> -1..+1")]
     public float steeringAxis; // -1..+1
     public bool button1Pressed; // true while held
-    public bool button2Pressed;
+    public bool button2Pressed; // true while held
 
     private UdpClient udp;
     private Thread recvThread;
@@ -55,14 +55,6 @@ public class UdpIntReceiver : MonoBehaviour
     void Awake()
     {
         rotTarget = rotationTarget != null ? rotationTarget : transform;
-        if (!colorRenderer)
-        {
-            colorRenderer = GetComponentInChildren<Renderer>();
-        }
-        if (colorRenderer)
-        {
-            SetRendererColor(idleColor);
-        }
         // Initialize yaw to current object yaw
         currentYaw = rotTarget.eulerAngles.y;
     }
@@ -113,9 +105,13 @@ public class UdpIntReceiver : MonoBehaviour
                 Debug.LogWarning($"[UDP] Unrecognized packet: '{line}'");
             }
         }
+        //Bomb cooldown timer
+        if (bombCooldownTimer > 0f)
+            bombCooldownTimer -= Time.deltaTime;
 
         // Apply smoothed absolute yaw each frame
         float targetYaw = steeringAxis * maxYawDegrees * (invertYaw ? -1f : 1f);
+
         // Exponential smoothing that's framerate-friendly
         float t = 1f - Mathf.Pow(1f - Mathf.Clamp01(yawSmoothing), Time.deltaTime * 60f);
         currentYaw = Mathf.LerpAngle(currentYaw, targetYaw, t);
@@ -127,8 +123,8 @@ public class UdpIntReceiver : MonoBehaviour
 
     private void HandleCsv(int pot, int b1Int, int b2Int)
     {
-        // pot: 0..1023 -> -1..+1
-        steeringAxis = Mathf.Lerp(-2f, 2f, Mathf.InverseLerp(0f, 1023f, pot));
+        // pot: 0..1023 -> -2..+2
+        steeringAxis = Mathf.Lerp(2f, -2f, Mathf.InverseLerp(0f, 1023f, pot));
 
         bool b1 = (b1Int != 0); // true = released
         bool b2 = (b2Int != 0);
@@ -144,7 +140,7 @@ public class UdpIntReceiver : MonoBehaviour
         }
 
         button1Pressed = !b1; // true while held
-        button2Pressed = !b2;
+        button2Pressed = !b2; // true while held
 
         lastB1 = b1;
         lastB2 = b2;
@@ -152,34 +148,88 @@ public class UdpIntReceiver : MonoBehaviour
 
     private void OnButton1Pressed()
     {
-        if (!spawnPrefab) return;
+        Debug.Log("Button1 pressed -> Damage Dealt");
 
-        // Spawn near the rotationTarget (or this transform)
-        Transform anchor = rotTarget ? rotTarget : transform;
-        Vector3 pos = anchor.position + anchor.TransformVector(spawnOffset);
-        Quaternion rot = anchor.rotation;
+        if (crosshairBox != null)
+        {
+            // Calculate world center of the box
+            Vector3 worldCenter = crosshairBox.transform.TransformPoint(crosshairBox.center);
+            Vector3 halfExtents = Vector3.Scale(crosshairBox.size, crosshairBox.transform.lossyScale) * 0.5f;
 
-        Instantiate(spawnPrefab, pos, rot, spawnParent);
-        Debug.Log("[CTRL] Button1 pressed -> Spawned prefab");
+            Collider[] hits = Physics.OverlapBox(
+                worldCenter,
+                halfExtents,
+                crosshairBox.transform.rotation
+            );
+
+            foreach (var hit in hits)
+            {
+                if (hit.CompareTag("Enemy"))
+                {
+                    var enemy = hit.GetComponent<MonoBehaviour>();
+                    if (enemy != null)
+                    {
+                        var method = enemy.GetType().GetMethod("TakeDamage");
+                        if (method != null)
+                        {
+                            method.Invoke(enemy, new object[] { damageAmount });
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
-    private bool colorActive = false;
+    //Stuff that happens when button 2 is pressed
     private void OnButton2Pressed()
     {
-        colorActive = !colorActive;
-        SetRendererColor(colorActive ? activeColor : idleColor);
-        Debug.Log("[CTRL] Button2 pressed -> Toggled color");
+        if (bombCooldownTimer > 0f)
+        {
+            Debug.Log("Bomb is on cooldown!");
+            return;
+        }
+
+        Debug.Log("Button2 pressed -> Dropping bomb");
+
+        if (bombPrefab != null && bombPoint != null)
+        {
+            GameObject bomb = Instantiate(bombPrefab, bombPoint.position, bombPoint.rotation);
+            StartCoroutine(BombRoutine(bomb));
+            bombCooldownTimer = bombCooldown; // Start cooldown
+        }
     }
 
-    private void SetRendererColor(Color c)
+    //Bomb logic
+    private System.Collections.IEnumerator BombRoutine(GameObject bomb)
     {
-        if (!colorRenderer) return;
+        yield return new WaitForSeconds(bombDelay);
 
-        // Handle materials safely (assuming a single material target)
-        if (colorRenderer.material.HasProperty("_Color"))
+        // Play explosion effect
+        if (explosionEffectPrefab != null)
         {
-            colorRenderer.material.color = c;
+            Instantiate(explosionEffectPrefab, bomb.transform.position, Quaternion.identity);
         }
+
+        // Damage police cars in radius
+        Collider[] hits = Physics.OverlapSphere(bomb.transform.position, bombRadius);
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Enemy"))
+            {
+                var enemy = hit.GetComponent<MonoBehaviour>();
+                if (enemy != null)
+                {
+                    var method = enemy.GetType().GetMethod("TakeDamage");
+                    if (method != null)
+                    {
+                        method.Invoke(enemy, new object[] { bombDamage });
+                    }
+                }
+            }
+        }
+
+        Destroy(bomb);
     }
 
     void OnDestroy()

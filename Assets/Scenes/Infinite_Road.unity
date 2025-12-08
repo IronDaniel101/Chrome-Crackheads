@@ -454,7 +454,6 @@ GameObject:
   m_Component:
   - component: {fileID: 640632930}
   - component: {fileID: 640632929}
-  - component: {fileID: 640632928}
   - component: {fileID: 640632932}
   - component: {fileID: 640632931}
   - component: {fileID: 640632933}
@@ -466,14 +465,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &640632928
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 640632927}
-  m_Enabled: 1
 --- !u!20 &640632929
 Camera:
   m_ObjectHideFlags: 0
@@ -1660,6 +1651,7 @@ GameObject:
   - component: {fileID: 1924695054}
   - component: {fileID: 1924695055}
   - component: {fileID: 1924695056}
+  - component: {fileID: 1924695057}
   m_Layer: 0
   m_Name: Player_Vehicle
   m_TagString: Player
@@ -1813,6 +1805,14 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.8401719, y: 2.5482445, z: 10.809999}
   m_Center: {x: -0.5856275, y: 1.437355, z: 2.1381097}
+--- !u!81 &1924695057
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1924695051}
+  m_Enabled: 1
 --- !u!4 &1930159992 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3600415068348231318, guid: 74642ec56dbfaa24f881a4da7d1fbf41, type: 3}

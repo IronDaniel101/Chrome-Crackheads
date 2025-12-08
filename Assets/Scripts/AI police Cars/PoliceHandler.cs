@@ -261,7 +261,14 @@ public class PoliceHandler : MonoBehaviour
         if (caughtPopup != null)
             caughtPopup.gameObject.SetActive(true);
 
-        // Optional: freeze the game
-        // Time.timeScale = 0f;
+        //freeze the game
+        //Time.timeScale = 0f;
+    }
+
+    public static void ResetGameState()
+    {
+        gameOver = false;
+        catchOwner = null;
+        allPolice.Clear();
     }
 }

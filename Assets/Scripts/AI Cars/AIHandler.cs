@@ -4,42 +4,89 @@ using UnityEngine;
 
 public class AIHandler : MonoBehaviour
 {
-    [SerializeField]
-    CarHandler carHandler;
+    [Header("Movement")]
+    [SerializeField] private float minSpeed = 20f;
+    [SerializeField] private float maxSpeed = 35f;
+
+    [Header("Despawn Settings")]
+    [SerializeField] private float despawnDistanceBehind = 20f;   // 20 units behind in player local space
+    [SerializeField] private float despawnCheckDelay    = 0.25f;  // wait a bit before we allow despawn
+
+    private float speed;
+    private float lifeTimer = 0f;
+
+    private Transform player;
+    private AICarSpawner spawner;
+
+    // Called by AICarSpawner after Instantiate()
+    public void Initialize(Transform playerTransform, AICarSpawner owner)
+    {
+        player  = playerTransform;
+        spawner = owner;
+
+        // Random speed for this car
+        speed = Random.Range(minSpeed, maxSpeed);
+    }
 
     private void Awake()
     {
-        if (CompareTag("Player"))
+        // Fallback: find player if Initialize hasn't set it yet
+        if (player == null)
         {
-            Destroy(this);
-            return;
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+                player = playerObj.transform;
         }
-    }
-    
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
+        if (speed <= 0f)
+            speed = Random.Range(minSpeed, maxSpeed);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        float accelerationInput = 1.0f;
-
-        float steerInput = 0.0f;
-
-        steerInput = Mathf.Clamp(steerInput, -1.0f, 1.0f);
-
-        carHandler.SetInput(new Vector2(steerInput, accelerationInput));
-    }
-
-    //Events
     private void OnEnable()
     {
-        carHandler.SetMaxSpeed(Random.Range(2, 4));
+        // Reset lifetime so despawn delay works correctly when reused from a pool
+        lifeTimer = 0f;
+
+        if (speed <= 0f)
+            speed = Random.Range(minSpeed, maxSpeed);
     }
 
+    private void Update()
+    {
+        lifeTimer += Time.deltaTime;
 
+        // Move along local Z (forward)
+        transform.position += transform.forward * speed * Time.deltaTime;
+
+        // Only start considering despawn after a short delay so we don't insta-kill on spawn
+        if (lifeTimer >= despawnCheckDelay)
+            CheckDespawnBehindPlayer();
+    }
+
+    private void CheckDespawnBehindPlayer()
+    {
+        if (player == null)
+            return;
+
+        // Same style as PoliceHandler: convert to player local space
+        Vector3 carInPlayerSpace = player.InverseTransformPoint(transform.position);
+
+        // Debug to verify what's going on:
+        // Debug.Log($"[AI] localZ={carInPlayerSpace.z:F1}");
+
+        // Despawn when far enough behind the player
+        if (carInPlayerSpace.z < -despawnDistanceBehind)
+        {
+            Despawn();
+        }
+    }
+
+    private void Despawn()
+    {
+        if (spawner != null)
+            spawner.OnAICarDestroyed();
+
+        // Return to pool
+        gameObject.SetActive(false);
+    }
 }

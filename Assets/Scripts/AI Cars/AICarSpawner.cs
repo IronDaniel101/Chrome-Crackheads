@@ -4,105 +4,96 @@ using UnityEngine;
 
 public class AICarSpawner : MonoBehaviour
 {
-    [SerializeField]
-    GameObject[] carAIPrefabs;
+    [Header("AI Car Setup")]
+    [SerializeField] private GameObject aiCarPrefab;
+    [SerializeField] private Transform player;          // player car transform
 
-    GameObject[] carAIPool = new GameObject[20];
+    [SerializeField] private float spawnInterval = 2f;  // Seconds between spawning cars
+    [SerializeField] private int maxAICars = 10;        // Maximum active AI cars
+    [SerializeField] private float spawnHeight = 0.5f;  // World Y position for spawned cars
 
-    Transform playerCarTransform;
+    private BoxCollider box;
+    private float timer;
+    private int currentAICount;
 
-    //Timing
-    float timeLastCarSpawned = 0;
-    WaitForSeconds wait = new WaitForSeconds(0.5f);
-
-    //Overlapped Check
-    [SerializeField]
-    LayerMask otherCarsLayerMask;
-    Collider[] overlappedCheckCollider = new Collider[1];
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
-        playerCarTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        box = GetComponent<BoxCollider>();
 
-        int prefabIndex = 0;
-
-        for (int i = 0; i < carAIPool.Length; i++)
+        if (box == null)
         {
-            carAIPool[i] = Instantiate(carAIPrefabs[prefabIndex]);
-            carAIPool[i].SetActive(false);
-
-            prefabIndex++;
-
-            //Loop the Prefab index if we run out of prefabs
-            if (prefabIndex > carAIPrefabs.Length - 1)
-                prefabIndex = 0;
+            Debug.LogError("AICarSpawner requires a BoxCollider on the same GameObject.");
         }
 
-        StartCoroutine(UpdateLessOftenCO());
-    }
-
-    IEnumerator UpdateLessOftenCO()
-    {
-        while (true)
+        // Fallback if not assigned in Inspector
+        if (player == null)
         {
-            CleanUpCarsBeyondView();
-            SpawnNewCars();
-
-            yield return wait;
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+                player = playerObj.transform;
         }
     }
 
-    void SpawnNewCars()
+    private void Update()
     {
-        if (Time.time - timeLastCarSpawned < 2)
+        if (player == null || box == null || aiCarPrefab == null)
             return;
 
-        GameObject carToSpawn = null;
+        timer += Time.deltaTime;
 
-        //Find a car to spawn
-        foreach (GameObject aiCar in carAIPool)
+        if (timer >= spawnInterval && currentAICount < maxAICars)
         {
-            //Skip active cars
-            if (aiCar.activeInHierarchy)
-                continue;
-
-            carToSpawn = aiCar;
-            break;
+            timer = 0f;
+            SpawnAICar();
         }
-
-        //No available car to spawn
-        if (carToSpawn == null)
-            return;
-
-        Vector3 spawnPosition = new Vector3(0, 0, playerCarTransform.transform.position.z + 200);
-
-        if(Physics.OverlapBoxNonAlloc(spawnPosition, Vector3.one * 2, overlappedCheckCollider, Quaternion.identity, otherCarsLayerMask) > 0)
-            return;
-
-        carToSpawn.transform.position = spawnPosition;
-        carToSpawn.SetActive(true);
-
-        timeLastCarSpawned = Time.time;
     }
 
-    void CleanUpCarsBeyondView()
+   private void SpawnAICar()
     {
-        foreach (GameObject aiCar in carAIPool)
+        if (box == null || aiCarPrefab == null)
+            return;
+
+        // Random position inside BoxCollider (local space)
+        Vector3 localRandomPoint = new Vector3(
+            Random.Range(-box.size.x * 0.5f, box.size.x * 0.5f),
+            0f,
+            Random.Range(-box.size.z * 0.5f, box.size.z * 0.5f)
+        );
+
+        // Convert to world space
+        Vector3 worldPoint = box.transform.TransformPoint(box.center + localRandomPoint);
+
+        // Force a fixed spawn height
+        worldPoint.y = spawnHeight;
+
+        //New: flat direction toward player
+        Vector3 toPlayer = player.position - worldPoint;
+        toPlayer.y = 0f;
+
+        if (toPlayer.sqrMagnitude < 0.001f)
         {
-            //Skip inactive cars
-            if (!aiCar.activeInHierarchy)
-                continue;
+            toPlayer = -player.forward;
+            toPlayer.y = 0f;
+        }
 
-            //Check if AI car is too far ahead
-            if (aiCar.transform.position.z - playerCarTransform.position.z > 200)
-                aiCar.SetActive(false);
+        Quaternion rotation = Quaternion.LookRotation(toPlayer.normalized, Vector3.up);
 
-            //check if AI car is too far behind
-            if (aiCar.transform.position.z - playerCarTransform.position.z < -50)
-                aiCar.SetActive(false);
-            
+        GameObject aiCar = Instantiate(aiCarPrefab, worldPoint, rotation);
+        currentAICount++;
+
+        var handler = aiCar.GetComponent<AIHandler>();
+        if (handler != null)
+        {
+            handler.Initialize(player, this);
+        }
+        else
+        {
+            Debug.LogWarning("Spawned AI car prefab is missing AIHandler component.");
         }
     }
 
+    public void OnAICarDestroyed()
+    {
+        currentAICount = Mathf.Max(0, currentAICount - 1);
+    }
 }

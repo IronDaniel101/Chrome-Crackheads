@@ -48,10 +48,7 @@ public class WallFailTrigger : MonoBehaviour
         }
         else
         {
-            // Fallback: if you prefer using a tag, uncomment this and tag your popup "LossPopup"
-            // var popupObj = GameObject.FindGameObjectWithTag("LossPopup");
-            // if (popupObj != null)
-            //     caughtPopup = popupObj;
+        
         }
     }
 }

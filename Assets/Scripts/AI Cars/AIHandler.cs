@@ -18,6 +18,9 @@ public class AIHandler : MonoBehaviour
     private Transform player;
     private AICarSpawner spawner;
 
+    //Link to Explosion
+    private static GameObject explosionPrefabStatic;
+
     // Called by AICarSpawner after Instantiate()
     public void Initialize(Transform playerTransform, AICarSpawner owner)
     {
@@ -88,5 +91,31 @@ public class AIHandler : MonoBehaviour
 
         // Return to pool
         gameObject.SetActive(false);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag("Player"))
+            return;
+
+        SpawnExplosion(transform.position);
+        Despawn();
+    }
+    private void SpawnExplosion(Vector3 position)
+    {
+        // Attempt to load explosion prefab only once
+        if (explosionPrefabStatic == null)
+        {
+            explosionPrefabStatic = Resources.Load<GameObject>("Explosion");
+            
+            if (explosionPrefabStatic == null)
+            {
+                Debug.LogError("Explosion prefab not found! Make sure 'Explosion.prefab' is inside a Resources folder.");
+                return;
+            }
+        }
+
+        GameObject vfx = Instantiate(explosionPrefabStatic, position, Quaternion.identity);
+        Destroy(vfx, 3f); // cleanup
     }
 }
